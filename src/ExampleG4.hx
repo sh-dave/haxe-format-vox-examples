@@ -24,20 +24,20 @@ class ExampleG4 {
 	var mx = 0.0;
 	var my = 0.0;
 
-	var vs : kha.graphics4.VertexStructure;
-	var vb : kha.graphics4.VertexBuffer;
-	var ib : kha.graphics4.IndexBuffer;
-	var pipe : kha.graphics4.PipelineState;
+	var vs: kha.graphics4.VertexStructure;
+	var vb: kha.graphics4.VertexBuffer;
+	var ib: kha.graphics4.IndexBuffer;
+	var pipe: kha.graphics4.PipelineState;
 
-	var normalId : ConstantLocation;
-	var mvId : ConstantLocation;
-	var pId : ConstantLocation;
+	var normalId: ConstantLocation;
+	var mvId: ConstantLocation;
+	var pId: ConstantLocation;
 
-	var model : FastMatrix4;
-	var view : FastMatrix4;
-	var projection : FastMatrix4;
+	var model: FastMatrix4;
+	var view: FastMatrix4;
+	var projection: FastMatrix4;
 
-	var z : Zui;
+	var z: Zui;
 
 	public function new() {
 		kha.System.notifyOnRender(render3d);
@@ -46,12 +46,12 @@ class ExampleG4 {
 		setupInput();
 		setup3d();
 
-		z = new Zui(kha.Assets.fonts.DroidSansMono, 16, 16);
+		z = new Zui({ font: kha.Assets.fonts.DroidSansMono });
 	}
 
-	function setupModel( file : String ) {
+	function setupModel( file: String ) {
 		var blob = Reflect.field(kha.Assets.blobs, file);
-		var vox = new format.vox.Reader(new BlobInput(blob)).read();
+		var vox = new format.vox.Reader(blob.toBytes()).read();
 
 		var voxData = new VoxLoader(vox);
 		var vertices = voxData.data;
@@ -60,13 +60,17 @@ class ExampleG4 {
 
 		vb = new kha.graphics4.VertexBuffer(vertices.length, vs, kha.graphics4.Usage.StaticUsage);
 		var vbd = vb.lock();
-			for (i in 0...vertices.length) vbd.set(i, vertices[i]);
+			for (i in 0...vertices.length) {
+				vbd.set(i, vertices[i]);
+			}
 		vb.unlock();
 
 		var indices = voxData.indices;
 		ib = new kha.graphics4.IndexBuffer(indices.length, kha.graphics4.Usage.StaticUsage);
 		var ibd = ib.lock();
-			for (i in 0...indices.length) ibd[i] = indices[i];
+			for (i in 0...indices.length) {
+				ibd[i] = indices[i];
+			}
 		ib.unlock();
 
 		tx = voxData.dx;
@@ -78,7 +82,7 @@ class ExampleG4 {
 		if (mouseDown) {
 			cameraPitch += mdx * -0.005;
 			cameraRoll += mdy * -0.005;
-			
+
 			var p2 = Math.PI / 2;
 
 			 if (cameraRoll < -p2) {
@@ -91,7 +95,7 @@ class ExampleG4 {
 		}
 
 		var target = new FastVector3(tx / 2, ty * 0.25, tz / 2);
-		var up = new FastVector3(0, 1, 0);  
+		var up = new FastVector3(0, 1, 0);
 		var eye = new FastVector3(
 			Math.cos(cameraRoll) * Math.sin(cameraPitch),
 			Math.sin(cameraRoll),
@@ -112,11 +116,16 @@ class ExampleG4 {
 		mdy = 0;
 	}
 
-	function setupInput() kha.input.Mouse.get().notify(mouse_downHandler, mouse_upHandler, mouse_moveHandler, mouse_wheelHandler);
-	function mouse_downHandler( b : Int, x : Int, y : Int ) mouseDown = true;
-	function mouse_upHandler( b : Int, x : Int, y : Int ) mouseDown = false;
+	function setupInput()
+		kha.input.Mouse.get().notify(mouse_downHandler, mouse_upHandler, mouse_moveHandler, mouse_wheelHandler);
 
-	function mouse_moveHandler( x : Int, y : Int, mx : Int, my : Int ) {
+	function mouse_downHandler( b: Int, x: Int, y: Int )
+		mouseDown = true;
+
+	function mouse_upHandler( b: Int, x: Int, y: Int )
+		mouseDown = false;
+
+	function mouse_moveHandler( x: Int, y: Int, mx: Int, my: Int ) {
 		mdx = x - this.mx;
 		mdy = y - this.my;
 
@@ -124,7 +133,7 @@ class ExampleG4 {
 		this.my = y;
 	}
 
-	function mouse_wheelHandler( delta : Int ) {
+	function mouse_wheelHandler( delta: Int ) {
 		if (delta < 0) {
 			cameraDistance -= 1;
 		} else if (delta > 0) {
@@ -178,13 +187,13 @@ class ExampleG4 {
 				f4.drawIndexedVertices();
 			f4.end();
 		}
-		
+
 		var f2 = fb.g2;
 
 		f2.begin(false);
 			z.begin(f2);
-				if (z.window(Id.window(), 4, 4, 256, kha.System.windowHeight())) {
-					if (z.node(Id.node(), 'MODELS', true)) {
+				if (z.window(Id.handle(), 4, 4, 256, kha.System.windowHeight())) {
+					if (z.panel(Id.handle(), 'MODELS', 1)) {
 						if (kha.Assets.blobs.names != null) {
 							for (m in kha.Assets.blobs.names) {
 								if (z.button(m.toUpperCase())) {

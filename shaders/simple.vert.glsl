@@ -1,17 +1,15 @@
-#ifdef GL_ES
-precision mediump float;
-#endif
+#version 450
 
-attribute vec3 aVertexNormal;
-attribute vec3 aVertexPosition;
-attribute vec3 aVertexColor;
+in vec3 aVertexNormal;
+in vec3 aVertexPosition;
+in vec3 aVertexColor;
 
 uniform mat4 uNormalMatrix;
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
 
-varying vec3 vLighting;
-varying vec3 vVertexColor;
+out vec3 vLighting;
+out vec3 vVertexColor;
 
 void main() {
 	gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
