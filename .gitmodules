@@ -1,6 +1,0 @@
-[submodule "libs/haxe-format-vox"]
-	path = libs/haxe-format-vox
-	url = https://github.com/sh-dave/haxe-format-vox.git
-[submodule "libs/zui"]
-	path = libs/zui
-	url = https://github.com/armory3d/zui.git
