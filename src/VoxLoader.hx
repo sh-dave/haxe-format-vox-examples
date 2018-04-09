@@ -3,17 +3,17 @@ package;
 import format.vox.Data;
 
 class VoxLoader {
-	public var data : Array<Float> = [];
-	public var indices : Array<Int> = [];
+	public var data: Array<Float> = [];
+	public var indices: Array<Int> = [];
 	public var dx = 0;
 	public var dy = 0;
 	public var dz = 0;
 
-	public function new( vox : Vox ) {
+	public function new( vox: Vox ) {
 		build(vox);
 	}
 
-	function build( vox : Vox ) {
+	function build( vox: Vox ) {
 		// Cube.create(0, 0, 0, 1, 1, 1, data, indices);
 		// Cube.create(2, 0, 0, 1, 0, 0, data, indices);
 		// Cube.create(0, 2, 0, 0, 1, 0, data, indices);
@@ -23,31 +23,33 @@ class VoxLoader {
 		var voxels : Array<Voxel> = null;
 
 		for (chunk in vox) {
-			switch (chunk) {
+			switch chunk {
 				case Chunk.Dimensions(x, y, z):
 					dx = x;
 					dy = z;
 					dz = y;
-				case Chunk.Geometry(v): voxels = v;
-				case Chunk.Palette(p): palette = p;
+				case Chunk.Geometry(v):
+					voxels = v;
+				case Chunk.Palette(p):
+					palette = p;
 			}
 		}
 
 		format.vox.Tools.fixZ_3d(vox);
-		
+
 		if (palette == null) {
-			palette = format.vox.Tools.defaultPalette; 
+			palette = format.vox.Tools.defaultPalette;
 		}
 
 		for (v in voxels) {
-			var c = palette[v.colorIndex - 1];
+			var c = palette[v.colorIndex];
 			Cube.create(v.x, v.y, v.z, c.r / 255, c.g / 255, c.b / 255, data, indices);
 		}
 	}
 }
 
 private class Cube {
-	public static function create( x : Float, y : Float, z : Float, r : Float, g : Float, b : Float, vd : Array<Float>, id : Array<Int> ) {
+	public static function create( x: Float, y: Float, z: Float, r: Float, g: Float, b: Float, vd: Array<Float>, id: Array<Int> ) {
 		var is = id.length;
 
 		for (i in 0...36) {
@@ -60,7 +62,7 @@ private class Cube {
 			vd.push(normals[i * 3 + 0]);
 			vd.push(normals[i * 3 + 1]);
 			vd.push(normals[i * 3 + 2]);
-			
+
 			id.push(is + indices[i]);
 		}
 	}
@@ -80,31 +82,31 @@ private class Cube {
 		0.5, -0.5,  0.5,
 		0.5,  0.5,  0.5,
 		-0.5,  0.5,  0.5,
-		
+
 		// Back face
 		-0.5, -0.5, -0.5,
 		-0.5,  0.5, -0.5,
 		0.5,  0.5, -0.5,
 		0.5, -0.5, -0.5,
-		
+
 		// Top face
 		-0.5,  0.5, -0.5,
 		-0.5,  0.5,  0.5,
 		0.5,  0.5,  0.5,
 		0.5,  0.5, -0.5,
-		
+
 		// Bottom face
 		-0.5, -0.5, -0.5,
 		0.5, -0.5, -0.5,
 		0.5, -0.5,  0.5,
 		-0.5, -0.5,  0.5,
-		
+
 		// Right face
 		0.5, -0.5, -0.5,
 		0.5,  0.5, -0.5,
 		0.5,  0.5,  0.5,
 		0.5, -0.5,  0.5,
-		
+
 		// Left face
 		-0.5, -0.5, -0.5,
 		-0.5, -0.5,  0.5,
@@ -150,41 +152,41 @@ private class Cube {
 		0.0,  1.0
 	];
 
-	static var normals : Array<Float> = [
+	static var normals: Array<Float> = [
 		// Front
 		0.0,  0.0,  1.0,
 		0.0,  0.0,  1.0,
 		0.0,  0.0,  1.0,
 		0.0,  0.0,  1.0,
-		
+
 		// Back
 		0.0,  0.0, -1.0,
 		0.0,  0.0, -1.0,
 		0.0,  0.0, -1.0,
 		0.0,  0.0, -1.0,
-		
+
 		// Top
 		0.0,  1.0,  0.0,
 		0.0,  1.0,  0.0,
 		0.0,  1.0,  0.0,
 		0.0,  1.0,  0.0,
-		
+
 		// Bottom
 		0.0, -1.0,  0.0,
 		0.0, -1.0,  0.0,
 		0.0, -1.0,  0.0,
 		0.0, -1.0,  0.0,
-		
+
 		// Right
 		1.0,  0.0,  0.0,
 		1.0,  0.0,  0.0,
 		1.0,  0.0,  0.0,
 		1.0,  0.0,  0.0,
-		
+
 		// Left
 		-1.0,  0.0,  0.0,
 		-1.0,  0.0,  0.0,
 		-1.0,  0.0,  0.0,
 		-1.0,  0.0,  0.0
-	];	
+	];
 }
