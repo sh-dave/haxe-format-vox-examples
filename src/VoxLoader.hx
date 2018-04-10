@@ -1,6 +1,6 @@
 package;
 
-import format.vox.Data;
+import format.vox.types.*;
 
 class VoxLoader {
 	public var data: Array<Float> = [];
@@ -14,34 +14,14 @@ class VoxLoader {
 	}
 
 	function build( vox: Vox ) {
-		// Cube.create(0, 0, 0, 1, 1, 1, data, indices);
-		// Cube.create(2, 0, 0, 1, 0, 0, data, indices);
-		// Cube.create(0, 2, 0, 0, 1, 0, data, indices);
-		// Cube.create(0, 0, 2, 0, 0, 1, data, indices);
+		dx = vox.sizes[0].x;
+		dy = vox.sizes[0].y;
+		dz = vox.sizes[0].z;
 
-		var palette : Array<Color> = null;
-		var voxels : Array<Voxel> = null;
+		format.vox.Tools.transformCoordinateSystem(vox);
+		var palette = vox.palette != null ? vox.palette : format.vox.Reader.DefaultPalette.map(format.vox.Tools.transformColor);
 
-		for (chunk in vox) {
-			switch chunk {
-				case Chunk.Dimensions(x, y, z):
-					dx = x;
-					dy = z;
-					dz = y;
-				case Chunk.Geometry(v):
-					voxels = v;
-				case Chunk.Palette(p):
-					palette = p;
-			}
-		}
-
-		format.vox.Tools.fixZ_3d(vox);
-
-		if (palette == null) {
-			palette = format.vox.Tools.defaultPalette;
-		}
-
-		for (v in voxels) {
+		for (v in vox.models[0]) {
 			var c = palette[v.colorIndex];
 			Cube.create(v.x, v.y, v.z, c.r / 255, c.g / 255, c.b / 255, data, indices);
 		}
